@@ -2,6 +2,8 @@ import { MapContainer, Marker, TileLayer, useMap, Popup } from "react-leaflet";
 import L from "leaflet";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
+import "leaflet-defaulticon-compatibility";
 import styles from "./Map.module.css";
 import { useEffect, useState } from "react";
 
@@ -16,7 +18,7 @@ const MapComponent = () => {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
     });
-    setLoadMap(true)
+    setLoadMap(true);
   };
   const OnGeolocationError = (error: GeolocationPositionError): void => {
     switch (error.code) {
@@ -63,7 +65,6 @@ const MapComponent = () => {
     }
   }, [loadMap]);
 
-  const size = 100;
   return (
     <>
       {loadMap ? (
@@ -78,15 +79,7 @@ const MapComponent = () => {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker
-              position={[currPosition.latitude, currPosition.longitude]}
-              icon={L.divIcon({
-                iconSize: [size, size],
-                iconAnchor: [size / 2, size + 9],
-                className: "mymarker",
-                html: "😁",
-              })}
-            >
+            <Marker position={[currPosition.latitude, currPosition.longitude]}>
               <Popup>
                 A pretty CSS3 popup. <br /> Easily customizable.
               </Popup>
