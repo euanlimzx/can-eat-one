@@ -6,10 +6,22 @@ import { memo, useState } from "react";
 import type { LatLngBounds, LatLngTuple } from "leaflet";
 // import MarkerClusterGroup from "@changey/react-leaflet-markercluster";
 import { debounce } from "lodash";
+import * as L from "leaflet";
+
+const RedMarker = L.icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 const MemoizedMarker = memo(
   ({ position, index }: { position: LatLngTuple; index: number }) => (
-    <Marker position={position}>
+    <Marker position={position} icon={RedMarker}>
       <Popup>Marker {index}</Popup>
     </Marker>
   )
@@ -59,9 +71,9 @@ const ShowMarkers = () => {
       {currZoom > 12 ? (
         <>
           {/* <MarkerClusterGroup chunkedLoading> */}
-            {visibleMarkers.map((position, idx) => (
-              <MemoizedMarker key={idx} position={position} index={idx} />
-            ))}
+          {visibleMarkers.map((position, idx) => (
+            <MemoizedMarker key={idx} position={position} index={idx} />
+          ))}
           {/* </MarkerClusterGroup> */}
         </>
       ) : null}

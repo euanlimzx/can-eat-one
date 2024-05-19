@@ -1,9 +1,4 @@
-import {
-  MapContainer,
-  Marker,
-  TileLayer,
-  Popup
-} from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import type { LatLngTuple, Map } from "leaflet";
 import { Box, Button, Flex, HStack, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
@@ -74,6 +69,7 @@ const MapComponent = () => {
       mapRef.current.flyTo(position, 18);
     }
   };
+
   return (
     <>
       {loadMap ? (
@@ -86,10 +82,22 @@ const MapComponent = () => {
             justifyContent="center"
           >
             <HStack spacing={3}>
-              <Button variant="solid" colorScheme="red" size="lg" boxShadow="lg" onClick={() => flyToLocation(currPosition)}>
+              <Button
+                variant="solid"
+                colorScheme="red"
+                size="lg"
+                boxShadow="lg"
+                onClick={() => flyToLocation(currPosition)}
+              >
                 Curr Location
               </Button>
-              <Button variant="solid" colorScheme="red" size="lg" boxShadow="lg" onClick={() => flyToLocation([1.304833, 103.831833])}>
+              <Button
+                variant="solid"
+                colorScheme="red"
+                size="lg"
+                boxShadow="lg"
+                onClick={() => flyToLocation([1.304833, 103.831833])}
+              >
                 Random Location
               </Button>
             </HStack>
@@ -102,8 +110,8 @@ const MapComponent = () => {
             ref={mapRef}
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+             attribution='&nbsp;<a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener noreferrer">OneMap</a>&nbsp;&copy;&nbsp;contributors&nbsp;&#124;&nbsp;<a href="https://www.sla.gov.sg/" target="_blank" rel="noopener noreferrer">Singapore Land Authority</a>'
+              url="https://www.onemap.gov.sg/maps/tiles/Grey/{z}/{x}/{y}.png"
             />
             <ShowMarkers />
             <Marker position={currPosition}>
