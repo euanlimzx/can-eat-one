@@ -4,8 +4,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import { memo, useState } from "react";
 import type { LatLngBounds, LatLngTuple } from "leaflet";
-import MarkerClusterGroup from "@changey/react-leaflet-markercluster";
-import "@changey/react-leaflet-markercluster/dist/styles.min.css"
+// import MarkerClusterGroup from "@changey/react-leaflet-markercluster";
 import { debounce } from "lodash";
 
 const MemoizedMarker = memo(
@@ -23,7 +22,7 @@ const ShowMarkers = () => {
 
   const data: LatLngTuple[] = [
     [1.309579, 103.827602],
-    [1.304833, 103.831833],
+    [1.309833, 103.833833],
     [1.304833, 103.831833],
     [1.304833, 103.831833],
     [1.31945, 103.876238],
@@ -59,11 +58,11 @@ const ShowMarkers = () => {
     <>
       {currZoom > 12 ? (
         <>
-          <MarkerClusterGroup chunkedLoading>
+          {/* <MarkerClusterGroup chunkedLoading> */}
             {visibleMarkers.map((position, idx) => (
               <MemoizedMarker key={idx} position={position} index={idx} />
             ))}
-          </MarkerClusterGroup>
+          {/* </MarkerClusterGroup> */}
         </>
       ) : null}
     </>
