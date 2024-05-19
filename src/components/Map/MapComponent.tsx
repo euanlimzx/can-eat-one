@@ -5,7 +5,7 @@ import {
   Popup
 } from "react-leaflet";
 import type { LatLngTuple, Map } from "leaflet";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
 import "leaflet-defaulticon-compatibility";
@@ -77,11 +77,23 @@ const MapComponent = () => {
   return (
     <>
       {loadMap ? (
-        <Box w="100vw" h="100vh">
-          <Button onClick={() => flyToLocation(currPosition)}>Curr Location</Button>
-          <Button onClick={() => flyToLocation([1.304833, 103.831833])}>
-            Random Location
-          </Button>
+        <Box w="100vw" h="100vh" overflow="hidden">
+          <Flex
+            position="fixed"
+            bottom="50"
+            zIndex={99}
+            w="100vw"
+            justifyContent="center"
+          >
+            <HStack spacing={3}>
+              <Button variant="solid" colorScheme="red" size="lg" boxShadow="lg" onClick={() => flyToLocation(currPosition)}>
+                Curr Location
+              </Button>
+              <Button variant="solid" colorScheme="red" size="lg" boxShadow="lg" onClick={() => flyToLocation([1.304833, 103.831833])}>
+                Random Location
+              </Button>
+            </HStack>
+          </Flex>
           <MapContainer
             center={currPosition}
             zoom={50}
