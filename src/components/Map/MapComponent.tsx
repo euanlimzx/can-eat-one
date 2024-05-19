@@ -1,17 +1,20 @@
-import { MapContainer, Marker, TileLayer, useMap, Popup } from "react-leaflet";
-import L from "leaflet";
+import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import { Map } from "leaflet";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
 import "leaflet-defaulticon-compatibility";
 import styles from "./Map.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import ShowMarkers from "./ShowMarkers";
 
 const MapComponent = () => {
+  // INITIALIZING MAP
+  const mapRef = useRef<Map | null>(null);
   const [loadMap, setLoadMap] = useState(false);
   const [currPosition, setCurrPosition] = useState({
-    latitude: 1.3521,
-    longitude: 103.8198,
+    latitude: 1.304833,
+    longitude: 103.831833,
   });
   const OnGeolocationSuccess = (position: GeolocationPosition) => {
     setCurrPosition({
@@ -74,15 +77,15 @@ const MapComponent = () => {
             zoom={50}
             scrollWheelZoom={true}
             className={styles.map}
+            ref={mapRef}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <ShowMarkers />
             <Marker position={[currPosition.latitude, currPosition.longitude]}>
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-              </Popup>
+              <Popup>You are here</Popup>
             </Marker>
           </MapContainer>
         </Box>
