@@ -2,15 +2,30 @@ import { Marker, useMapEvents, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
 import "leaflet-defaulticon-compatibility";
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { LatLngBounds, LatLngTuple } from "leaflet";
+import MarkerClusterGroup from "@changey/react-leaflet-markercluster";
+import "@changey/react-leaflet-markercluster/dist/styles.min.css"
+import { debounce } from "lodash";
+
+const MemoizedMarker = memo(
+  ({ position, index }: { position: LatLngTuple; index: number }) => (
+    <Marker position={position}>
+      <Popup>Marker {index}</Popup>
+    </Marker>
+  )
+);
+MemoizedMarker.displayName = "MemoizedMarker";
+
 const ShowMarkers = () => {
   const [currZoom, setCurrZoom] = useState(50);
   const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
 
   const data: LatLngTuple[] = [
     [1.309579, 103.827602],
-    [1.344335, 103.752215],
+    [1.304833, 103.831833],
+    [1.304833, 103.831833],
+    [1.304833, 103.831833],
     [1.31945, 103.876238],
     [1.368412, 103.882114],
     [1.276743, 103.795427],
@@ -22,15 +37,17 @@ const ShowMarkers = () => {
   ];
 
   const map = useMapEvents({
-    moveend() {
+    moveend: debounce(() => {
       setMapBounds(map.getBounds());
-    },
-    zoomend() {
+    }, 100),
+    zoomend: debounce(() => {
       const zoom = map.getZoom();
       if (zoom) {
         setCurrZoom(zoom);
+        console.log(zoom);
+        setMapBounds(map.getBounds());
       }
-    },
+    }, 100),
   });
 
   // Filter markers based on whether they fall within the current map bounds
@@ -40,13 +57,13 @@ const ShowMarkers = () => {
 
   return (
     <>
-      {currZoom > 1 ? (
+      {currZoom > 12 ? (
         <>
-          {visibleMarkers.map((position, idx) => (
-            <Marker key={idx} position={position}>
-              <Popup>Marker {idx}</Popup>
-            </Marker>
-          ))}
+          <MarkerClusterGroup chunkedLoading>
+            {visibleMarkers.map((position, idx) => (
+              <MemoizedMarker key={idx} position={position} index={idx} />
+            ))}
+          </MarkerClusterGroup>
         </>
       ) : null}
     </>
