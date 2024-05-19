@@ -1,6 +1,12 @@
-import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
 import { Map } from "leaflet";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
 import "leaflet-defaulticon-compatibility";
@@ -12,15 +18,11 @@ const MapComponent = () => {
   // INITIALIZING MAP
   const mapRef = useRef<Map | null>(null);
   const [loadMap, setLoadMap] = useState(false);
-  const [currPosition, setCurrPosition] = useState({
-    latitude: 1.304833,
-    longitude: 103.831833,
-  });
+  const [currPosition, setCurrPosition] = useState<[number, number]>([
+    1.304833, 103.831833,
+  ]);
   const OnGeolocationSuccess = (position: GeolocationPosition) => {
-    setCurrPosition({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    });
+    setCurrPosition([position.coords.latitude, position.coords.longitude]);
     setLoadMap(true);
   };
   const OnGeolocationError = (error: GeolocationPositionError): void => {
@@ -68,12 +70,21 @@ const MapComponent = () => {
     }
   }, [loadMap]);
 
+  const flyToLocation = (position: [number, number]) => {
+    if (mapRef.current) {
+      mapRef.current.flyTo(position, 18);
+    }
+  };
   return (
     <>
       {loadMap ? (
         <Box w="100vw" h="100vh">
+          <Button onClick={() => flyToLocation(currPosition)}>Curr Location</Button>
+          <Button onClick={() => flyToLocation([1.304833, 103.831833])}>
+            Random Location
+          </Button>
           <MapContainer
-            center={[currPosition.latitude, currPosition.longitude]}
+            center={currPosition}
             zoom={50}
             scrollWheelZoom={true}
             className={styles.map}
@@ -84,7 +95,7 @@ const MapComponent = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <ShowMarkers />
-            <Marker position={[currPosition.latitude, currPosition.longitude]}>
+            <Marker position={currPosition}>
               <Popup>You are here</Popup>
             </Marker>
           </MapContainer>

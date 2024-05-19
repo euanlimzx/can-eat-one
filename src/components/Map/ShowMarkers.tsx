@@ -10,14 +10,13 @@ const ShowMarkers = () => {
       const zoom = map.getZoom();
       if (zoom) {
         setCurrZoom(zoom);
-        console.log(currZoom)
       }
     },
   });
 
   return (
     <>
-      {currZoom > 15 ? (
+      {currZoom > 16 ? (
         <Marker position={[1.304833, 103.831833]}>
           <Popup>You are here bobb</Popup>
         </Marker>
