@@ -2,10 +2,9 @@ import {
   MapContainer,
   Marker,
   TileLayer,
-  Popup,
-  useMapEvents,
+  Popup
 } from "react-leaflet";
-import { Map } from "leaflet";
+import type { LatLngTuple, Map } from "leaflet";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
@@ -18,7 +17,7 @@ const MapComponent = () => {
   // INITIALIZING MAP
   const mapRef = useRef<Map | null>(null);
   const [loadMap, setLoadMap] = useState(false);
-  const [currPosition, setCurrPosition] = useState<[number, number]>([
+  const [currPosition, setCurrPosition] = useState<LatLngTuple>([
     1.304833, 103.831833,
   ]);
   const OnGeolocationSuccess = (position: GeolocationPosition) => {
@@ -70,7 +69,7 @@ const MapComponent = () => {
     }
   }, [loadMap]);
 
-  const flyToLocation = (position: [number, number]) => {
+  const flyToLocation = (position: LatLngTuple) => {
     if (mapRef.current) {
       mapRef.current.flyTo(position, 18);
     }
