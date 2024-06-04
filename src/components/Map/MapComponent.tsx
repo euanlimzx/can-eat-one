@@ -1,12 +1,15 @@
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import type { LatLngTuple, Map } from "leaflet";
-import { Box, Button, Flex, HStack, Text } from "@chakra-ui/react";
+import {Search2Icon} from '@chakra-ui/icons'
+import { Box, Button, Flex, HStack, Input, InputGroup, InputLeftElement, Text, VStack } from "@chakra-ui/react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css"; // Re-uses images from ~leaflet package
 import "leaflet-defaulticon-compatibility";
 import styles from "./Map.module.css";
 import { useEffect, useRef, useState } from "react";
 import ShowMarkers from "./ShowMarkers";
+import { useRouter } from "next/router";
+import { api } from "../../utils/api";
 
 const MapComponent = () => {
   // INITIALIZING MAP
@@ -15,6 +18,11 @@ const MapComponent = () => {
   const [currPosition, setCurrPosition] = useState<LatLngTuple>([
     1.304833, 103.831833,
   ]);
+  const [searchedLocation, setSearchedLocation] = useState<string>("")
+  const searchLocationQuery = api.searchLocation.getLocation.useQuery(
+    {locationQuery: searchedLocation},
+    {enabled: false}
+  )
   const OnGeolocationSuccess = (position: GeolocationPosition) => {
     setCurrPosition([position.coords.latitude, position.coords.longitude]);
     setLoadMap(true);
@@ -69,7 +77,20 @@ const MapComponent = () => {
       mapRef.current.flyTo(position, 18);
     }
   };
-
+  function handleInputSubmit(event: any): void { // yes I know
+    if (event.key === 'Enter') {
+      return handleSearch()
+    }
+  }
+  const handleSearch = () => {
+    searchLocationQuery.refetch()
+    console.log(searchLocationQuery.data.locations)
+    if (searchLocationQuery.data!.locations) {
+      flyToLocation([searchLocationQuery!.data!.locations[0]!.latitude, searchLocationQuery!.data!.locations[0]!.longitude]);
+    } else {
+      flyToLocation([searchLocationQuery!.data!.latitude!, searchLocationQuery!.data!.longitude!]);
+    }
+  };
   return (
     <>
       {loadMap ? (
@@ -81,26 +102,43 @@ const MapComponent = () => {
             w="100vw"
             justifyContent="center"
           >
-            <HStack spacing={3}>
-              <Button
-                variant="solid"
-                colorScheme="red"
-                size="lg"
-                boxShadow="lg"
-                onClick={() => flyToLocation(currPosition)}
-              >
-                Curr Location
-              </Button>
-              <Button
-                variant="solid"
-                colorScheme="red"
-                size="lg"
-                boxShadow="lg"
-                onClick={() => flyToLocation([1.304833, 103.831833])}
-              >
-                Random Location
-              </Button>
-            </HStack>
+            <VStack spacing={3}>
+              <InputGroup>
+                <InputLeftElement pointerEvents='none'>
+                  <Search2Icon/>
+                </InputLeftElement>
+                <Input 
+                  placeholder="Search location..."
+                  variant="filled"
+                  onChange={
+                    (event) => setSearchedLocation(event?.target.value)
+                  }
+                  onKeyDown={
+                    (event) => handleInputSubmit(event)
+                  }
+                />
+              </InputGroup>
+              <HStack spacing={3}>
+                <Button
+                  variant="solid"
+                  colorScheme="red"
+                  size="lg"
+                  boxShadow="lg"
+                  onClick={() => flyToLocation(currPosition)}
+                >
+                  Curr Location
+                </Button>
+                <Button
+                  variant="solid"
+                  colorScheme="red"
+                  size="lg"
+                  boxShadow="lg"
+                  onClick={() => flyToLocation([1.304833, 103.831833])}
+                >
+                  Random Location
+                </Button>
+              </HStack>
+            </VStack>
           </Flex>
           <MapContainer
             center={currPosition}
