@@ -2,19 +2,53 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([name])
+  @@index([name])
+}
+
+model Collection {
+  id       String   @id @default(uuid())
+  author   String
+  passcode String
+  reviews  Review[]
+  malls    Mall[]
+}
+
+model Mall {
+  collectionId String
+  name         String   @id
+  lat          Decimal
+  lng          Decimal
+  reviews      Review[]
+
+  Collection Collection @relation(fields: [collectionId], references: [id])
+}
+
+model Review {
+  collectionId  String
+  mallId        String?
+  googleMapId   String
+  lat           Decimal
+  lng           Decimal
+  name          String
+  googleMapsUrl String
+
+  Collection Collection @relation(fields: [collectionId], references: [id])
+  Mall       Mall?      @relation(fields: [mallId], references: [name])
+
+  @@id([collectionId, googleMapId])
+  @@unique([collectionId, googleMapId])
 }
