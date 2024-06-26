@@ -19,28 +19,6 @@ export const searchRouter = createTRPCRouter({
                     timeout: 1000,
                 });
                 return response.data.results;
-                // if (results.length === 0) {
-                //     return { error: "No results found" };
-                // } else if (results.length === 1) {
-                //     const place = results[0];
-                //     return {
-                //         location: place!.formatted_address,
-                //         latitude: place!.geometry!.location.lat,
-                //         longitude: place!.geometry!.location.lng,
-                //         placeId: place!.place_id,
-                //         name: place!.name,
-                //     };
-                // } else {
-                //     return {
-                //         locations: results.map(place => ({
-                //             name: place.name,
-                //             latitude: place!.geometry!.location.lat,
-                //             longitude: place!.geometry!.location.lng,
-                //             address: place.formatted_address,
-                //             placeId: place.place_id,
-                //         })),
-                //     };
-                // }
             } catch (error) {
                 console.error("Error in Google Maps API call:", error);
                 return { error: "An error occurred while searching for locations" };
