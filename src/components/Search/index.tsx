@@ -1,37 +1,41 @@
-import { Search2Icon } from "@chakra-ui/icons"
-import { InputGroup, InputRightElement, Input } from "@chakra-ui/react"
-import { useState } from "react"
-import { api } from "~/utils/api"
+import React, { useState } from "react";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { Search2Icon } from "@chakra-ui/icons";
+import { api } from "~/utils/api";
 
-const Search = () => {
-    const [searchedLocation, setSearchedLocation] = useState<string>("")
-    const searchLocationQuery = api.searchLocation.getLocation.useQuery(
-      {locationQuery: searchedLocation},
-      {enabled: false}
-    )
+const SearchComponent = () => {
+  const [searchedLocation, setSearchedLocation] = useState("");
+  const searchLocationQuery = api.search.getLocation.useQuery(
+    { locationQuery: searchedLocation },
+    { enabled: false }
+  );
 
-    // const handleInputSubmit = async (event: KeyboardEvent): Promise<void> => { // yes I know
-    //     if (event.key === 'Enter') {
-    //       const results = await searchLocationQuery.refetch()
-    //       console.log(results.data)
-    //     }
-    //   }
-    
-    return (
-        <InputGroup>
-        <Input 
+  const handleFormSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      const results = await searchLocationQuery.refetch();
+      console.log(results.data);
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleFormSubmit}>
+      <InputGroup>
+        <Input
           placeholder="Search location..."
           variant="outline"
-          bg='white'
-          onChange={
-            (event) => setSearchedLocation(event?.target.value)
-          }
+          bg="white"
+          value={searchedLocation}
+          onChange={(event) => setSearchedLocation(event.target.value)}
         />
-                <InputRightElement pointerEvents='none'>
-          <Search2Icon/>
+        <InputRightElement pointerEvents="none">
+          <Search2Icon />
         </InputRightElement>
       </InputGroup>
-    )
-}
+    </form>
+  );
+};
 
-export default Search
+export default SearchComponent;
