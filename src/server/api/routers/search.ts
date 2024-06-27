@@ -14,7 +14,8 @@ export const searchRouter = createTRPCRouter({
                 const response = await client.textSearch({
                     params: {
                         query: input.locationQuery,
-                        key: GOOGLE_MAPS_API_KEY
+                        key: GOOGLE_MAPS_API_KEY,
+                        region: "sg"
                     },
                     timeout: 1000,
                 });
