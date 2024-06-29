@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { Search2Icon, SmallCloseIcon } from "@chakra-ui/icons";
@@ -21,6 +22,7 @@ const SearchComponent = ({
   const [searchedLocation, setSearchedLocation] = useState("");
   const [searchResults, setSearchResults] = useState<Partial<PlaceData>[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(true);
+  const [isLoadingResults, setIsLoadingResults] = useState(false)
   const searchLocationQuery = api.search.getLocation.useQuery(
     { locationQuery: searchedLocation },
     { enabled: false }
@@ -39,16 +41,21 @@ const SearchComponent = ({
 
   const handleSearch = async (event: React.FormEvent) => {
     event.preventDefault();
+    setIsLoadingResults(true)
     try {
       const result = await searchLocationQuery.refetch();
-      setSearchResults(result.data);
-      setShowSearchResults(true);
-      console.log(result.data);
-      //todo @euan idk how to fix this error gdi
+      // Check if the result has a data property and is an array
+      if (result && Array.isArray(result.data)) {
+        setSearchResults(result.data);
+        setShowSearchResults(true)
+      } else {
+        throw Error("Incorrect results retured by Google")
+    }
     } catch (error) {
       setSearchResults([]);
       console.error("Search failed:", error);
     }
+    setIsLoadingResults(false)
   };
 
   const handleSelect = (location: { lat: number; lng: number }) => {
@@ -63,18 +70,20 @@ const SearchComponent = ({
       w={{ base: "90vw", sm: "70vw", md: "50vw" }}
     >
       <form onSubmit={handleSearch}>
-        <InputGroup>
+        <InputGroup shadow="lg">
           <InputLeftElement pointerEvents="none">
             <Search2Icon />
           </InputLeftElement>
           <Box cursor="pointer" onClick={() => resetSearch({})}>
             <InputRightElement onClick={() => resetSearch({})}>
-              <SmallCloseIcon />
-            </InputRightElement>
+              {
+                isLoadingResults? <Spinner size="sm"/> :  <SmallCloseIcon />
+              }
+             </InputRightElement>
           </Box>
           <Input
             w="100%"
-            placeholder="Search for a different location"
+            placeholder="Where are you headed?"
             variant="outline"
             bg="white"
             borderRadius="0.5rem"
