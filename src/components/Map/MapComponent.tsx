@@ -83,7 +83,7 @@ const MapComponent = () => {
     <>
       {loadMap ? (
         <Box w="100vw" h="100vh" overflow="hidden">
-          <MapOverlay flyToLocation={flyToLocation}/>
+          <MapOverlay flyToLocation={flyToLocation} homePosition={homePosition}/>
           <MapContainer
             center={currPosition}
             zoom={50}
